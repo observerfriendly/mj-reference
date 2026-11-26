@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MJ Reference</title>
+<meta name="description" content="Midjourney visual style keywords and parameter reference.">
+<meta name="theme-color" content="#0e0e0e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fbfbfa" media="(prefers-color-scheme: light)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MJ Ref">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header>
+  <nav class="tabs" role="tablist">
+    <button role="tab" class="tab on" data-view="styles" aria-selected="true">Styles</button>
+    <button role="tab" class="tab" data-view="codes" aria-selected="false">Codes</button>
+  </nav>
+
+  <div class="searchwrap" id="searchwrap">
+    <input id="q" type="search" placeholder="Search 4,951 keywords" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search" aria-label="Search keywords">
+    <button id="clear" class="clear" aria-label="Clear search" hidden>&times;</button>
+  </div>
+
+  <div class="chips" id="chips" aria-label="Filter by category"></div>
+</header>
+
+<main>
+  <section id="styles" class="view">
+    <p class="count" id="count"></p>
+    <div class="grid" id="grid"></div>
+    <div id="sentinel" class="sentinel"></div>
+    <p class="empty" id="empty" hidden>Nothing matches that.</p>
+  </section>
+
+  <section id="codes" class="view" hidden>
+    <div id="codelist"></div>
+    <p class="foot">Flags, ranges and defaults are facts drawn from Midjourney's parameter list and cross-checked against two consolidated references. Descriptions are written for this app. Notes flag version limits and places sources disagree. For full prose see <a href="https://docs.midjourney.com/hc/en-us/articles/32859204029709-Parameter-List">the official parameter list</a>.</p>
+  </section>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
