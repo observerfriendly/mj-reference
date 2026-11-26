@@ -24,14 +24,21 @@ var el = {
 };
 
 /* ---------- thumbnails ----------
-   Resize proxy first, raw GitHub as the fallback. If wsrv is down or
-   blocked, onerror swaps in the full-size original so the app still works. */
-function thumbUrl(path) {
+   Three sources, tried in order. Different hosting surfaces permit
+   different origins: a published artifact sandbox allows jsDelivr but not
+   wsrv or raw GitHub, while ordinary static hosting allows all three.
+   Rather than detect the surface, walk the list on error until one loads. */
+var SRC_REPO = 'willwulfken/MidJourney-Styles-and-Keywords-Reference';
+
+function sourcesFor(path) {
   var raw = DB.prefix + path;
-  return 'https://wsrv.nl/?url=' + encodeURIComponent(raw.replace(/^https?:\/\//, '')) +
-         '&w=' + THUMB_W + '&output=webp&q=72';
+  return [
+    'https://cdn.jsdelivr.net/gh/' + SRC_REPO + '@main/' + path,
+    'https://wsrv.nl/?url=' + encodeURIComponent(raw.replace(/^https?:\/\//, '')) +
+      '&w=' + THUMB_W + '&output=webp&q=72',
+    raw
+  ];
 }
-function rawUrl(path) { return DB.prefix + path; }
 
 /* ---------- clipboard ---------- */
 function toast(msg) {
@@ -106,10 +113,14 @@ function cardFor(r) {
   img.loading = 'lazy';
   img.decoding = 'async';
   img.alt = kw;
-  img.src = thumbUrl(path);
-  img.addEventListener('error', function onerr() {
-    img.removeEventListener('error', onerr);
-    img.src = rawUrl(path);          // proxy failed — serve the original
+
+  var srcs = sourcesFor(path);
+  var at = 0;
+  img.src = srcs[0];
+  img.addEventListener('error', function () {
+    at += 1;
+    if (at < srcs.length) img.src = srcs[at];
+    else img.classList.add('dead');
   });
 
   var cap = document.createElement('div');

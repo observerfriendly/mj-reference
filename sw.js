@@ -41,6 +41,7 @@ self.addEventListener('activate', function (e) {
 });
 
 function isRender(url) {
+  if (url.hostname === "cdn.jsdelivr.net") return true;
   return url.hostname === 'wsrv.nl' ||
          url.hostname === 'raw.githubusercontent.com' ||
          url.hostname === 'images.weserv.nl';
