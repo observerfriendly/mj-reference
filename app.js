@@ -30,6 +30,8 @@ var el = {
    Rather than detect the surface, walk the list on error until one loads. */
 var SRC_REPO = 'willwulfken/MidJourney-Styles-and-Keywords-Reference';
 
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
 function sourcesFor(path) {
   var raw = DB.prefix + path;
   return [
@@ -108,20 +110,17 @@ function cardFor(r) {
   card.setAttribute('role', 'button');
   card.tabIndex = 0;
 
-  var img = document.createElement('img');
+  /* Tiles come from bundled sprite sheets on this same origin. Every
+     external image host is blocked inside a published artifact sandbox,
+     so remote thumbnails cannot be used there at all. */
+  var gi = r[4];
+  var img = document.createElement('div');
   img.className = 'thumb';
-  img.loading = 'lazy';
-  img.decoding = 'async';
-  img.alt = kw;
-
-  var srcs = sourcesFor(path);
-  var at = 0;
-  img.src = srcs[0];
-  img.addEventListener('error', function () {
-    at += 1;
-    if (at < srcs.length) img.src = srcs[at];
-    else img.classList.add('dead');
-  });
+  img.setAttribute('role', 'img');
+  img.setAttribute('aria-label', kw);
+  img.style.backgroundImage = 'url(sprites/s' + pad2(Math.floor(gi / 256)) + '.webp)';
+  img.style.backgroundPosition =
+    (gi % 16) / 15 * 100 + '% ' + Math.floor((gi % 256) / 16) / 15 * 100 + '%';
 
   var cap = document.createElement('div');
   cap.className = 'cap';
@@ -301,6 +300,7 @@ Promise.all([
 ]).then(function (res) {
   DB = res[0];
   PARAMS = res[1];
+  for (var i = 0; i < DB.rows.length; i++) DB.rows[i][4] = i;
   el.q.placeholder = 'Search ' + DB.rows.length.toLocaleString() + ' keywords';
   buildChips();
   buildCodes();
